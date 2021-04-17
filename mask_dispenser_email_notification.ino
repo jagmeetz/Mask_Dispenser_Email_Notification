@@ -18,7 +18,7 @@ const char* password = "ambanikuta";
 //********************Wifi********************//
 
 //********************EEPROM********************//
-#define EEPROM_SIZE 1
+#define EEPROM_SIZE 2
 //********************EEPROM********************//
 
 //********************Email Settings********************//
@@ -74,11 +74,12 @@ void setup()
   //********************EEPROM Setup********************//
   EEPROM.begin(EEPROM_SIZE);
   masksLeft = EEPROM.read(0);
+  lock = EEPROM.read(1);
 
   //********************Email Service Setup********************//
   smtpData.setLogin(smtpServer, smtpServerPort, emailSenderAccount, emailSenderPassword);
   smtpData.setSender("MaskDispenserGNDEC", emailSenderAccount);
-  smtpData.setPriority("High");
+  smtpData.setPriority("Normal");
   smtpData.setSubject(emailSubject);
   smtpData.setMessage("<div style=\"color:#2f4468;\"><h1>Mask Dispenser is out of masks</h1><p>Kindly refill. Process to refill can be seen from this video ,link,</p></div>", true);
 
@@ -113,6 +114,11 @@ void eeprom_write()
     EEPROM.commit();
     Serial.println("Mask number saved in flash memory");
   }
+    if (EEPROM.read(1) != lock) {
+    EEPROM.write(1, lock);
+    EEPROM.commit();
+    Serial.println("Lock");
+  }
 }
 //********************Functions********************//
 
@@ -121,6 +127,11 @@ void eeprom_write()
 void loop()
 {
   eeprom_write();
+  while (lock)
+  {
+    Serial.println("Dispenser Empty");
+  }
+  
   float dist;
   dist = ultrasonic_Distance();
 
@@ -148,10 +159,7 @@ void loop()
 
     delay(2500);
   }
-  while (lock)
-  {
-    Serial.println("Dispenser Empty");
-  }
+
 }
 //********************Loop********************//
 
