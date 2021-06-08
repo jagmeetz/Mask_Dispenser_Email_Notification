@@ -140,7 +140,7 @@ void loop()
     digitalWrite(LED, HIGH); // LED High
     digitalWrite(MotorIn1, HIGH);
     digitalWrite(MotorIn2, LOW);
-    delay(500);
+    delay(250);
     digitalWrite(LED, LOW);
     digitalWrite(MotorIn1, LOW);
     digitalWrite(MotorIn2, LOW);
